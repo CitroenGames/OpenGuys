@@ -5,6 +5,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
 #include "Net/UnrealNetwork.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
 ACG_BaseCharacter::ACG_BaseCharacter()
@@ -15,13 +17,26 @@ ACG_BaseCharacter::ACG_BaseCharacter()
 	GetMesh()->SetIsReplicated(true);
 	DynamicMaterial = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
 	DynamicMaterial1 = GetMesh()->CreateAndSetMaterialInstanceDynamic(1);
+
+	// camera boom
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(GetMesh());
+	CameraBoom->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
+	CameraBoom->TargetArmLength = 500.0f;
+	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
+
+	// camera
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	Camera->bUsePawnControlRotation = false;
 }
 
 // Called when the game starts or when spawned
 void ACG_BaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnPoof();
+	SpawningEffects();
 	// if locally controlled
 	if (IsLocallyControlled())
 	{
@@ -29,6 +44,7 @@ void ACG_BaseCharacter::BeginPlay()
 	}
 }
 
+// Is called when the player is colliding with another actor
 void ACG_BaseCharacter::OnPlayerCollision_Implementation(AActor* CollidedActor)
 {
 	// if the player is not ragdolling
@@ -41,6 +57,7 @@ void ACG_BaseCharacter::OnPlayerCollision_Implementation(AActor* CollidedActor)
 	}
 }
 
+// ragdoll function
 void ACG_BaseCharacter::Multicast_Ragdoll_Implementation()
 {
 	// ragdoll the player
@@ -59,15 +76,16 @@ void ACG_BaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+// replication function
 void ACG_BaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
-void ACG_BaseCharacter::SpawnPoof()
+// Spawn Effects
+void ACG_BaseCharacter::SpawningEffects()
 {
 	// Spawn Niagra particle effect at actor location
-
 	if (SpawnNiagaraParticle)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SpawnNiagaraParticle, GetActorLocation());
@@ -75,7 +93,6 @@ void ACG_BaseCharacter::SpawnPoof()
 
 	// Play sound effect at actor location
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SpawnSoundEffect, GetActorLocation());
-
 }
 
 void ACG_BaseCharacter::ServerSetAppearance_Implementation(bool AppearanceMale, int NewAppearanceColorID)
@@ -126,5 +143,24 @@ FLinearColor ACG_BaseCharacter::GetColorFromID(int ColorID)
 			return FLinearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		default:
 			return FLinearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+}
+
+void ACG_BaseCharacter::SetZoomDistanceCamera(float NewZoomDistance)
+{
+	if (CameraBoom)
+	{
+		// Get current spring arm length and add the new zoom distance
+		float NewCameraArmLength = CameraBoom->TargetArmLength + NewZoomDistance;
+
+		// Clamp the new camera arm length between 100 and 1500
+		NewCameraArmLength = FMath::Clamp(NewCameraArmLength, 100.0f, 1500.0f);
+
+		// Set the new spring arm length
+		CameraBoom->TargetArmLength = NewCameraArmLength;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraBoom is not initialized."));
 	}
 }

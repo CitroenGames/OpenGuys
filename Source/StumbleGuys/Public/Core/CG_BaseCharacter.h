@@ -18,20 +18,15 @@ class STUMBLEGUYS_API ACG_BaseCharacter : public ACharacter, public ICG_PlayerIn
 
 public:
 
-	// player interface 
-	virtual void OnPlayerCollision_Implementation(AActor* CollidedActor) override;
-
-	// ragdoll function
-	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
-		void Multicast_Ragdoll();
-
 	// Sets default values for this character's properties
 	ACG_BaseCharacter();
 
+	// Player state reference
 	ACG_PlayerState* PlayerStateRef;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	// ragdoll function
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+		void Multicast_Ragdoll();
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 		void ServerSetAppearance(bool AppearanceMale, int NewAppearanceColorID);
@@ -41,9 +36,16 @@ public:
 		void RespawnPlayer();
 
 protected:
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// player interface 
+	virtual void OnPlayerCollision_Implementation(AActor* CollidedActor) override;
 
 	UPROPERTY(EditAnywhere, Category = "Effects")
 		UNiagaraSystem* SpawnNiagaraParticle;
@@ -59,6 +61,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Mesh")
 		USkeletalMesh* FemaleMesh;
 
+	UFUNCTION(BlueprintCallable)
+		void SetZoomDistanceCamera(float NewZoomDistance);
 
 private:
 
@@ -66,7 +70,7 @@ private:
 		bool bIsRagdolling;
 
 	UFUNCTION()
-		void SpawnPoof();
+		void SpawningEffects();
 
 	UFUNCTION()
 		FLinearColor GetColorFromID(int ColorID);
@@ -76,5 +80,13 @@ private:
 
 	UPROPERTY()
 		UMaterialInstanceDynamic* DynamicMaterial1;
+
+	// camera boom
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
+
+	// camera
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* Camera;
 
 };
