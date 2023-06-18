@@ -41,7 +41,9 @@ void ACG_PlayerController::ServerSpawnCharacter_Implementation()
 		const bool IsMaleAppearance = PlayerStateRefrence->GetMaleAppearance();
 		// get current checkpoint from player state
 		const FName CheckPoint = PlayerStateRefrence->GetCurrentCheckPoint();
-		/*Gamemode->SpawnCharacter(this, CheckPoint, AppearanceID, IsMaleAppearance);*/
+		Gamemode->SpawnCharacter(this, "", 1, true);
+		// log
+		UE_LOG(LogTemp, Warning, TEXT("Spawned Character"));
 	}
 }
 
@@ -110,4 +112,14 @@ void ACG_PlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			UGameplayStatics::OpenLevel(World, "MainMenu");
 		}
 	}
+}
+
+void ACG_PlayerController::PlayMatchOver_Implementation()
+{
+	PlayMatchOverBP();
+}
+
+void ACG_PlayerController::PlayMatchReady_Implementation()
+{
+	PlayMatchReadyBP();
 }

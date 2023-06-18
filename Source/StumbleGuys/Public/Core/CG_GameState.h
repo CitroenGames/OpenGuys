@@ -15,7 +15,7 @@ class STUMBLEGUYS_API ACG_GameState : public AGameState
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CountDownTimer)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, ReplicatedUsing = OnRep_CountDownTimer)
 		int CountDownTimer;
 	
 	ACG_GameState();
@@ -27,9 +27,21 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Count Down")
 		void RoundStart();
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_RoundEnded)
+		bool RoundEnded;
+
+	UPROPERTY(BlueprintReadWrite, ReplicatedUsing = OnRep_WinnerRef)
+		class APlayerState* WinnerRef;
+
+	UFUNCTION(BlueprintCallable)
+		void OnRep_WinnerRef();
+
 private:
 	UFUNCTION()
 		void StartCountDown();
+
+	UFUNCTION()
+		void OnRep_RoundEnded();
 
 	UFUNCTION()
 		void OnRep_CountDownTimer();
@@ -41,4 +53,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 		class USoundBase* TimerTickSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+		class USoundBase* GameEndSound;
 };

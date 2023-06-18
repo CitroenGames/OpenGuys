@@ -97,27 +97,27 @@ void ACG_BaseCharacter::SpawningEffects()
 
 void ACG_BaseCharacter::ServerSetAppearance_Implementation(bool AppearanceMale, int NewAppearanceColorID)
 {
-	int ColorID = NewAppearanceColorID;
-	GetMesh()->SetSkeletalMesh(AppearanceMale ? MaleMesh : FemaleMesh);
+	//int ColorID = NewAppearanceColorID;
+	//GetMesh()->SetSkeletalMesh(AppearanceMale ? MaleMesh : FemaleMesh);
 
-	if (DynamicMaterial == nullptr)
-	{
-		DynamicMaterial = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
-	}
+	//if (DynamicMaterial == nullptr)
+	//{
+	//	DynamicMaterial = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+	//}
 
-	// set mesh material 
-	DynamicMaterial->SetVectorParameterValue("Character_Color", GetColorFromID(ColorID));
+	//// set mesh material 
+	//DynamicMaterial->SetVectorParameterValue("Character_Color", GetColorFromID(ColorID));
 
-	if (DynamicMaterial1 == nullptr)
-	{
-		DynamicMaterial1 = GetMesh()->CreateAndSetMaterialInstanceDynamic(1);
-	}
+	//if (DynamicMaterial1 == nullptr)
+	//{
+	//	DynamicMaterial1 = GetMesh()->CreateAndSetMaterialInstanceDynamic(1);
+	//}
 
-	DynamicMaterial1->SetVectorParameterValue("Character_Color", GetColorFromID(ColorID));
+	//DynamicMaterial1->SetVectorParameterValue("Character_Color", GetColorFromID(ColorID));
 
-	// apply the material to the mesh
-	GetMesh()->SetMaterial(0, DynamicMaterial);
-	GetMesh()->SetMaterial(1, DynamicMaterial1);
+	//// apply the material to the mesh
+	//GetMesh()->SetMaterial(0, DynamicMaterial);
+	//GetMesh()->SetMaterial(1, DynamicMaterial1);
 }
 
 FLinearColor ACG_BaseCharacter::GetColorFromID(int ColorID)

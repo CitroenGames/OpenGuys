@@ -23,4 +23,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn Character")
 		void SpawnSpectator(APlayerController* Player, bool SpawnAtPlayerLocation, FVector SpawnTransform);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player State")
+		UClass* CharacterClass;
 };

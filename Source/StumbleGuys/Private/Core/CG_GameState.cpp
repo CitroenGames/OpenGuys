@@ -3,6 +3,7 @@
 #include "Core/CG_GameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
+#include "Core/CG_PlayerController.h"
 
 ACG_GameState::ACG_GameState()
 {
@@ -14,6 +15,8 @@ void ACG_GameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ACG_GameState, CountDownTimer);
+	DOREPLIFETIME(ACG_GameState, RoundEnded);
+	DOREPLIFETIME(ACG_GameState, WinnerRef);
 }
 
 void ACG_GameState::BeginPlay()
@@ -35,6 +38,15 @@ void ACG_GameState::StartCountDown()
 
 void ACG_GameState::OnRep_CountDownTimer()
 {
+	if (CountDownTimer == 2)
+	{
+		ACG_PlayerController* CGPlayerController = Cast<class ACG_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		if (CGPlayerController)
+		{
+			// play match start
+			CGPlayerController->PlayMatchReady();
+		}
+	}
 	if (CountDownTimer > 0)
 	{
 		// play sound effect 2d
@@ -46,5 +58,32 @@ void ACG_GameState::OnRep_CountDownTimer()
 		RoundStart();
 		// play sound effect 2d
 		UGameplayStatics::PlaySound2D(GetWorld(), TimerEndSound);
+	}
+}
+
+void ACG_GameState::OnRep_RoundEnded()
+{
+	if (RoundEnded)
+	{
+		// play sound effect 2d
+		UGameplayStatics::PlaySound2D(GetWorld(), GameEndSound);
+		// get cg player controller
+		ACG_PlayerController* CGPlayerController = Cast<class ACG_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		if (CGPlayerController)
+		{
+			// play match Over
+			CGPlayerController->PlayMatchOver();
+		}
+
+	}
+}
+
+void ACG_GameState::OnRep_WinnerRef()
+{
+	// has auth
+	if (HasAuthority())
+	{
+		RoundEnded = true;
+		OnRep_RoundEnded();
 	}
 }

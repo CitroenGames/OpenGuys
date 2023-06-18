@@ -26,6 +26,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Server, Reliable, Category = "Spawn Character")
 		void ServerSpawnSpectator(bool SpawnAtPlayerLocation);
+
+	UFUNCTION(Client, Reliable, Category = "Animation")
+		void PlayMatchOver();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Animation")
+		void PlayMatchOverBP();
+
+	UFUNCTION(Client, Reliable, Category = "Animation")
+		void PlayMatchReady();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Animation")
+		void PlayMatchReadyBP();
 	
 protected:
 	// player state class
