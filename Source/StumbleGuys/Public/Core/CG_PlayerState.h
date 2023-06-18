@@ -16,6 +16,12 @@ class STUMBLEGUYS_API ACG_PlayerState : public APlayerState
 
 public:
 	ACG_PlayerState();
+
+	UFUNCTION()
+		bool GetMaleAppearance() { return bAppearanceMale; }
+
+	UFUNCTION()
+		int GetColorID() { return AppearanceColorID; }
 	
 protected:
 
@@ -31,8 +37,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		int AppearanceColorID;
 
-private:
-
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, Replicated, meta = (AllowPrivateAccess = true))
 		bool bAppearanceMale;
 };

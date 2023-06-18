@@ -32,4 +32,6 @@ void ACG_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(ACG_PlayerState, CurrentCheckPoint);
 	// replicate the AppearanceColorID variable
 	DOREPLIFETIME(ACG_PlayerState, AppearanceColorID);
+	// replicate the bAppearanceMale variable
+	DOREPLIFETIME(ACG_PlayerState, bAppearanceMale);
 }
