@@ -33,8 +33,3 @@ void ACG_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	// replicate the AppearanceColorID variable
 	DOREPLIFETIME(ACG_PlayerState, AppearanceColorID);
 }
-
-bool ACG_PlayerState::ServerSetAppearance_Validate()
-{
-	return true;
-}

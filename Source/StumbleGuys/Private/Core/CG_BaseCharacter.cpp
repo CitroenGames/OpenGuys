@@ -33,7 +33,6 @@ void ACG_BaseCharacter::BeginPlay()
 void ACG_BaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void ACG_BaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -55,7 +54,7 @@ void ACG_BaseCharacter::SpawnPoof()
 
 }
 
-void ACG_BaseCharacter::Server_SetAppearance_Implementation(bool AppearanceMale, int NewAppearanceColorID)
+void ACG_BaseCharacter::ServerSetAppearance_Implementation(bool AppearanceMale, int NewAppearanceColorID)
 {
 	int ColorID = NewAppearanceColorID;
 	GetMesh()->SetSkeletalMesh(AppearanceMale ? MaleMesh : FemaleMesh);

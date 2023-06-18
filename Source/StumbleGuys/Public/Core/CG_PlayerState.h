@@ -32,9 +32,7 @@ protected:
 		int AppearanceColorID;
 
 private:
+
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 		bool bAppearanceMale;
-
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerSetAppearance();
 };

@@ -25,7 +25,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
-		void Server_SetAppearance(const bool AppearanceMale, const int NewAppearanceColorID);
+		void ServerSetAppearance(bool AppearanceMale, int NewAppearanceColorID);
 
 protected:
 	// Called when the game starts or when spawned
