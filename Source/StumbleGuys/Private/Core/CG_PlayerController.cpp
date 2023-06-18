@@ -34,9 +34,11 @@ void ACG_PlayerController::ServerSpawnCharacter_Implementation()
 	if (Gamemode)
 	{
 		// get appearance id and ismaleappearance from player state
-		int AppearanceID = PlayerStateRefrence->GetColorID();
-		bool IsMaleAppearance = PlayerStateRefrence->GetMaleAppearance();
-		Gamemode->SpawnCharacter(AppearanceID, IsMaleAppearance);
+		const int AppearanceID = PlayerStateRefrence->GetColorID();
+		const bool IsMaleAppearance = PlayerStateRefrence->GetMaleAppearance();
+		// get current checkpoint from player state
+		const FName CheckPoint = PlayerStateRefrence->GetCurrentCheckPoint();
+		Gamemode->SpawnCharacter(this, CheckPoint, AppearanceID, IsMaleAppearance);
 	}
 }
 

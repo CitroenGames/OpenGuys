@@ -19,7 +19,7 @@ public:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn Character")
-		void SpawnCharacter(int AppearanceID, bool IsMaleAppearance);
+		void SpawnCharacter(APlayerController* PlayerController, FName CheckPoint, int AppearanceID, bool IsMaleAppearance);
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn Character")
 		void SpawnSpectator(APlayerController* Player, bool SpawnAtPlayerLocation, FVector SpawnTransform);

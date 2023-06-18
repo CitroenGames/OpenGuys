@@ -22,6 +22,10 @@ public:
 
 	UFUNCTION()
 		int GetColorID() { return AppearanceColorID; }
+
+	// get current checkpoint
+	UFUNCTION()
+		FName GetCurrentCheckPoint() { return CurrentCheckPoint; }
 	
 protected:
 
