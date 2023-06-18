@@ -6,6 +6,7 @@
 #include "Core/CG_PlayerState.h"
 #include "Core/CG_BaseCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "Core/CG_GameState.h"
 
 ACG_Gamemode::ACG_Gamemode()
 {
@@ -15,6 +16,8 @@ ACG_Gamemode::ACG_Gamemode()
 	PlayerControllerClass = ACG_PlayerController::StaticClass();
 	// set default player state class to CG_PlayerState
 	PlayerStateClass = ACG_PlayerState::StaticClass();
+	// set default game state class to CG_GameState
+	GameStateClass = ACG_GameState::StaticClass();
 }
 
 void ACG_Gamemode::BeginPlay()
@@ -53,7 +56,13 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		// character class is CG_BaseCharacter
 		UClass* CharacterClass = ACG_BaseCharacter::StaticClass();
-		GetWorld()->SpawnActor<ACG_BaseCharacter>(CharacterClass, SpawnTransform, SpawnRotation, SpawnParameters);
+		// spawn character
+		ACG_BaseCharacter* Character = GetWorld()->SpawnActor<ACG_BaseCharacter>(CharacterClass, SpawnTransform, SpawnRotation, SpawnParameters);
+		// possess character
+		PlayerController->Possess(Character);
+		// set appearance id and ismaleappearance
+		Character->ServerSetAppearance(IsMaleAppearance, AppearanceID);
+
 	}
 }
 

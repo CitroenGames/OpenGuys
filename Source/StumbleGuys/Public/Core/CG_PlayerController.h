@@ -34,4 +34,8 @@ protected:
 		bool IsPlaying = false;
 		
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+private:
+	UFUNCTION()
+		void InitPlayerController();
 };
