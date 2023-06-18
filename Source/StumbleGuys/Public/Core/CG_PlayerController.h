@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "OnlineSubsystem.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "CG_PlayerController.generated.h"
 
 /**
@@ -34,6 +36,9 @@ protected:
 		bool IsPlaying = false;
 		
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// override end play
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
 	UFUNCTION()

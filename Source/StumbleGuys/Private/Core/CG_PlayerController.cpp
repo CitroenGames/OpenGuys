@@ -6,6 +6,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Core/CG_Gamemode.h"
 #include "Core/CG_GameState.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ACG_PlayerController::ACG_PlayerController()
@@ -82,6 +83,31 @@ void ACG_PlayerController::InitPlayerController()
 				// log
 				UE_LOG(LogTemp, Warning, TEXT("Spawned Spectator"));
 			}
+		}
+	}
+}
+
+// end play
+void ACG_PlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	// if endplay is because of removed from world or quit game then we leave and return to main menu
+	if (EndPlayReason == EEndPlayReason::Quit || EndPlayReason == EEndPlayReason::RemovedFromWorld)
+	{
+		IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+		if (OnlineSub)
+		{
+			IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
+			if (Sessions.IsValid())
+			{
+				Sessions->DestroySession(NAME_GameSession);
+			}
+		}
+
+		UWorld* World = GetWorld();
+		if (World != nullptr)
+		{
+			UGameplayStatics::OpenLevel(World, "MainMenu");
 		}
 	}
 }
