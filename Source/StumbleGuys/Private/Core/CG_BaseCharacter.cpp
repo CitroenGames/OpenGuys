@@ -29,6 +29,30 @@ void ACG_BaseCharacter::BeginPlay()
 	}
 }
 
+void ACG_BaseCharacter::OnPlayerCollision_Implementation(AActor* CollidedActor)
+{
+	// if the player is not ragdolling
+	if (!bIsRagdolling)
+	{
+		// ragdoll the player
+		bIsRagdolling = true;
+		Multicast_Ragdoll();
+		UE_LOG(LogTemp, Warning, TEXT("Ragdolling"));
+	}
+}
+
+void ACG_BaseCharacter::Multicast_Ragdoll_Implementation()
+{
+	// ragdoll the player
+	bIsRagdolling = true;
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true);
+	UE_LOG(LogTemp, Warning, TEXT("Ragdolling"));
+	// 2 second timer to respawn the player
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ACG_BaseCharacter::RespawnPlayer, 2.0f, false);
+}
+
 // Called to bind functionality to input
 void ACG_BaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
