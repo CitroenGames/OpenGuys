@@ -32,7 +32,7 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	APawn* ControlledPawn = PlayerController->GetPawn();
 	FVector SpawnTransform;
 	FRotator SpawnRotation;
-	AActor* RandomPlayerStart;
+	AActor* RandomPlayerStart = nullptr;
 	TArray<AActor*> PlayerStarts;
 
 	//destroy controlled pawn
@@ -40,11 +40,12 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	{
 		ControlledPawn->Destroy();
 	}
+
 	// is checkpoint tag empty?
 	if (CheckPoint == "")
 	{
 		// spawn character at default location
-		UE_LOG(LogTemp, Warning, TEXT("SpawnCharacter at default location"));
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at default location"));
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 		// filter player start with PlayerStart tag
 		for (int i = 0; i < PlayerStarts.Num(); i++)
@@ -52,8 +53,10 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 			APlayerStart* PlayerStart = Cast<APlayerStart>(PlayerStarts[i]);
 			if (PlayerStart != nullptr)
 			{
-				if (PlayerStart->PlayerStartTag != "None")
+				FString PlayerStartTag = PlayerStart->PlayerStartTag.ToString();
+				if (!PlayerStartTag.Equals("Start", ESearchCase::IgnoreCase))
 				{
+					UE_LOG(LogTemp, Warning, TEXT("PlayerStartTag: %s"), *PlayerStart->PlayerStartTag.ToString());
 					PlayerStarts.RemoveAt(i);
 					// Decrement the counter as we have just removed an item from the TArray
 					i--;
@@ -64,7 +67,7 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	else
 	{
 		// spawn character at Check Point location
-		UE_LOG(LogTemp, Warning, TEXT("SpawnCharacter at Current CheckPoint location"));
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at Current CheckPoint location"));
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 		// filter player start with PlayerStart tag
 		for (int i = 0; i < PlayerStarts.Num(); i++)
@@ -81,6 +84,7 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 			}
 		}
 	}
+
 	// log all player start from array
 	for (int i = 0; i < PlayerStarts.Num(); i++)
 	{
@@ -90,16 +94,15 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 			UE_LOG(LogTemp, Warning, TEXT("PlayerStart: %s"), *PlayerStart->PlayerStartTag.ToString());
 		}
 	}
+
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	// spawn character
 	ACG_BaseCharacter* Character = GetWorld()->SpawnActor<ACG_BaseCharacter>(CharacterClass, SpawnTransform, SpawnRotation, SpawnParameters);
 	// possess character
 	PlayerController->Possess(Character);
-	// set character appearance
-	Character->ServerSetAppearance(IsMaleAppearance, AppearanceID);
-	// set view target with blend
 	PlayerController->SetViewTargetWithBlend(Character, 0.f, EViewTargetBlendFunction::VTBlend_Cubic);
+	Character->ServerSetAppearance(IsMaleAppearance, AppearanceID);
 }
 
 void ACG_Gamemode::SpawnSpectator(APlayerController* Player, bool SpawnAtPlayerLocation, FVector SpawnTransform)

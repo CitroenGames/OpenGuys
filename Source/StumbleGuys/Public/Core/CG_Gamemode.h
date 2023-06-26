@@ -6,9 +6,7 @@
 #include "GameFramework/GameMode.h"
 #include "CG_Gamemode.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class STUMBLEGUYS_API ACG_Gamemode : public AGameMode
 {
