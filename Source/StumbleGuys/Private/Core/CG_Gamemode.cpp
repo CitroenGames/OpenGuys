@@ -67,10 +67,11 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	else
 	{
 		// spawn character at last checkpoint location
-		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at default location"));
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at checkpoint location"));
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 		// filter player start with PlayerStart tag
 		FString CheckPointString = CheckPoint.ToString();
+		UE_LOG(LogTemp, Warning, TEXT("CheckPointString: %s"), *CheckPointString);
 		for (int i = 0; i < PlayerStarts.Num(); i++)
 		{
 			APlayerStart* PlayerStart = Cast<APlayerStart>(PlayerStarts[i]);
