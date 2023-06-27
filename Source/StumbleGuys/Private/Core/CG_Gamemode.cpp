@@ -54,7 +54,7 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 			if (PlayerStart != nullptr)
 			{
 				FString PlayerStartTag = PlayerStart->PlayerStartTag.ToString();
-				if (!PlayerStartTag.Equals("Start", ESearchCase::IgnoreCase))
+				if (!PlayerStartTag.Equals("None", ESearchCase::IgnoreCase))
 				{
 					UE_LOG(LogTemp, Warning, TEXT("PlayerStartTag: %s"), *PlayerStart->PlayerStartTag.ToString());
 					PlayerStarts.RemoveAt(i);
@@ -66,17 +66,20 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	}
 	else
 	{
-		// spawn character at Check Point location
-		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at Current CheckPoint location"));
+		// spawn character at last checkpoint location
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at default location"));
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 		// filter player start with PlayerStart tag
+		FString CheckPointString = CheckPoint.ToString();
 		for (int i = 0; i < PlayerStarts.Num(); i++)
 		{
 			APlayerStart* PlayerStart = Cast<APlayerStart>(PlayerStarts[i]);
 			if (PlayerStart != nullptr)
 			{
-				if (PlayerStart->PlayerStartTag != CheckPoint)
+				FString PlayerStartTag = PlayerStart->PlayerStartTag.ToString();
+				if (PlayerStartTag != CheckPointString)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("PlayerStartTag: %s"), *PlayerStart->PlayerStartTag.ToString());
 					PlayerStarts.RemoveAt(i);
 					// Decrement the counter as we have just removed an item from the TArray
 					i--;
