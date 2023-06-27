@@ -88,6 +88,7 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 			}
 		}
 	}
+
 	//set spawn transform to the first player start location
 	if (PlayerStarts.Num() > 0)
 	{
