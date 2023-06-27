@@ -84,15 +84,18 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 			}
 		}
 	}
-
-	// log all player start from array
-	for (int i = 0; i < PlayerStarts.Num(); i++)
+	//set spawn transform to the first player start location
+	if (PlayerStarts.Num() > 0)
 	{
-		APlayerStart* PlayerStart = Cast<APlayerStart>(PlayerStarts[i]);
-		if (PlayerStart != nullptr)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PlayerStart: %s"), *PlayerStart->PlayerStartTag.ToString());
-		}
+		RandomPlayerStart = PlayerStarts[FMath::RandRange(0, PlayerStarts.Num() - 1)];
+		SpawnTransform = RandomPlayerStart->GetActorLocation();
+		SpawnRotation = RandomPlayerStart->GetActorRotation();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No PlayerStarts found"));
+		SpawnTransform = FVector(0.f, 0.f, 0.f);
+		SpawnRotation = FRotator(0.f, 0.f, 0.f);
 	}
 
 	FActorSpawnParameters SpawnParameters;
