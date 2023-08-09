@@ -36,8 +36,8 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 		ControlledPawn->Destroy();
 	}
 
-	FVector SpawnTransform;
-	FRotator SpawnRotation;
+	FVector SpawnTransform = FVector(0.f, 0.f, 0.f);
+	FRotator SpawnRotation = FRotator(0.f, 0.f, 0.f);
 	APlayerStart* RandomPlayerStart = nullptr;
 	TArray<APlayerStart*> PlayerStarts;
 
@@ -82,12 +82,6 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 		RandomPlayerStart = PlayerStarts[FMath::RandRange(0, PlayerStarts.Num() - 1)];
 		SpawnTransform = RandomPlayerStart->GetActorLocation();
 		SpawnRotation = RandomPlayerStart->GetActorRotation();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No PlayerStarts found"));
-		SpawnTransform = FVector(0.f, 0.f, 0.f);
-		SpawnRotation = FRotator(0.f, 0.f, 0.f);
 	}
 
 	FActorSpawnParameters SpawnParameters;
