@@ -48,7 +48,7 @@ void ACG_GameState::OnRep_CountDownTimer()
 			CGPlayerController->PlayMatchReady();
 		}
 	}
-	if (CountDownTimer > 0)
+	if (CountDownTimer != 0)
 	{
 		// play sound effect 2d
 		UGameplayStatics::PlaySound2D(GetWorld(), TimerTickSound);

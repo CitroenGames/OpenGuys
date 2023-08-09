@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Core/CG_GameState.h"
 #include "EngineUtils.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACG_Gamemode::ACG_Gamemode()
 {
@@ -24,6 +25,21 @@ void ACG_Gamemode::BeginPlay()
 {
 	Super::BeginPlay();
 	RefreshPlayerStarts();
+}
+
+void ACG_Gamemode::PostLogin(APlayerController* NewPlayer)
+{
+	AllPlayerControllers.Add(NewPlayer);
+}
+
+void ACG_Gamemode::Logout(AController* Exiting)
+{
+	AllPlayerControllers.Remove(Cast<APlayerController>(Exiting));
+}
+
+void ACG_Gamemode::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
+{
+	AllPlayerControllers.Add(NewPC);
 }
 
 void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName CheckPoint, int AppearanceID, bool IsMaleAppearance)
@@ -87,7 +103,20 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	PlayerController->SetViewTargetWithBlend(Character, 0.f, EViewTargetBlendFunction::VTBlend_Cubic);
 	Character->ServerSetAppearance(IsMaleAppearance, AppearanceID);
 
-	//TODO if the gamestate countdown timer is not 0 lock the player movement
+	// Cast MyGameState and check if the countdown timer is not 0; if it is, lock the player movement by setting movement mode to none
+	ACG_GameState* CGGameState = Cast<ACG_GameState>(UGameplayStatics::GetGameState(this));
+	if (CGGameState)
+	{
+		if (CGGameState->GetCountDownTimer() > 0)
+		{
+			// We need to get the movement component and set it as a local variable
+			UCharacterMovementComponent* CharacterMovementComponent = Character->GetCharacterMovement();
+			if (CharacterMovementComponent)
+			{
+				CharacterMovementComponent->SetMovementMode(EMovementMode::MOVE_None);
+			}
+		}
+	}
 }
 
 void ACG_Gamemode::SpawnSpectator(APlayerController* Player, bool SpawnAtPlayerLocation, FVector SpawnTransform)
@@ -117,6 +146,36 @@ void ACG_Gamemode::EnableCharacterMovement()
 	// TODO enable character movement by iterating through all player controllers
 	// and getting the controlled pawn and setting movement mode to walking
 	
+	for (TActorIterator<ACG_BaseCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		ACG_BaseCharacter* Character = *ActorItr;
+		if (Character)
+		{
+			// We need to get the movement component and set it as a local variable
+			UCharacterMovementComponent* CharacterMovementComponent = Character->GetCharacterMovement();
+			if (CharacterMovementComponent)
+			{
+				CharacterMovementComponent->SetMovementMode(EMovementMode::MOVE_Walking);
+			}
+		}
+	}
+	
 	// also do a sphere trace by channel visibility with a 100 as a radius
 	// and call onplayercollision with all of the actors hit
+}
+
+void ACG_Gamemode::TraveltoLevel()
+{
+	// get current level name and switch depending on level name
+	FString CurrentLevelName = GetWorld()->GetMapName();
+	UE_LOG(LogTemp, Warning, TEXT("CurrentLevelName: %s"), *CurrentLevelName);
+	switch (*CurrentLevelName)
+	{
+	case "Gameplay_Map1_Level":
+		UGameplayStatics::OpenLevel(GetWorld(), "Level_02");
+		break;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("ERROR: MAP IS NOT VALID"));
+		break;
+	}
 }

@@ -15,8 +15,6 @@ class STUMBLEGUYS_API ACG_GameState : public AGameState
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, ReplicatedUsing = OnRep_CountDownTimer)
-		int CountDownTimer;
 	
 	ACG_GameState();
 
@@ -35,6 +33,14 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void OnRep_WinnerRef();
+
+	UFUNCTION()
+		int GetCountDownTimer() const { return CountDownTimer; }
+
+protected:
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, ReplicatedUsing = OnRep_CountDownTimer)
+		int CountDownTimer;
 
 private:
 	UFUNCTION()

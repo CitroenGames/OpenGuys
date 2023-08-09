@@ -80,7 +80,7 @@ void ACG_PlayerController::InitPlayerController()
 		ACG_GameState* GameState = Cast<ACG_GameState>(GetWorld()->GetGameState());
 		if (GameState)
 		{
-			if (GameState->CountDownTimer != 0)
+			if (GameState->GetCountDownTimer() != 0)
 			{
 				ServerSpawnCharacter();
 				// log
@@ -97,7 +97,7 @@ void ACG_PlayerController::InitPlayerController()
 }
 
 // end play
-void ACG_PlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void ACG_PlayerController:: (const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 	// if endplay is because of removed from world or quit game then we leave and return to main menu
