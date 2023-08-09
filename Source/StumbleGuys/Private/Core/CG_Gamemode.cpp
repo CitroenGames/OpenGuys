@@ -55,6 +55,10 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 		}
 	}
 
+	// filter player start with PlayerStart tag
+	FString CheckPointString = CheckPoint.ToString();
+	UE_LOG(LogTemp, Warning, TEXT("CheckPointString: %s"), *CheckPointString);
+
 	// is checkpoint tag empty?
 	if (CheckPoint == FName("None"))
 	{
@@ -68,9 +72,6 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	{
 		// spawn character at last checkpoint location
 		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at checkpoint location"));
-		// filter player start with PlayerStart tag
-		FString CheckPointString = CheckPoint.ToString();
-		UE_LOG(LogTemp, Warning, TEXT("CheckPointString: %s"), *CheckPointString);
 		PlayerStarts.RemoveAll([CheckPoint](APlayerStart* PlayerStart) {
 			return PlayerStart->PlayerStartTag.ToString() != CheckPoint.ToString();
 		});
@@ -85,7 +86,7 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	}
 
 	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	// spawn character
 	ACG_BaseCharacter* Character = GetWorld()->SpawnActor<ACG_BaseCharacter>(CharacterClass, SpawnTransform, SpawnRotation, SpawnParameters);
 	// possess character
