@@ -24,7 +24,7 @@ public:
 	virtual void BeginPlay() override;
 
 	// blueprint enheritable
-	UFUNCTION(BlueprintImplementableEvent, Category = "Count Down")
+	UFUNCTION()
 		void RoundStart();
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_RoundEnded)

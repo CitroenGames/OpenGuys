@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "GameFramework/PlayerStart.h"
 #include "CG_Gamemode.generated.h"
-
 
 UCLASS()
 class STUMBLEGUYS_API ACG_Gamemode : public AGameMode
@@ -24,4 +24,14 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player State")
 		UClass* CharacterClass;
+
+	UFUNCTION()
+		void RefreshPlayerStarts();
+
+	UFUNCTION()
+		void EnableCharacterMovement();
+
+protected:
+	UPROPERTY()
+		TArray<APlayerStart*> PlayerStarts;
 };

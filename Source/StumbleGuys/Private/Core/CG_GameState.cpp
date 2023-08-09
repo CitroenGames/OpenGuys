@@ -4,6 +4,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
 #include "Core/CG_PlayerController.h"
+#include "Core/CG_Gamemode.h"
 
 ACG_GameState::ACG_GameState()
 {
@@ -51,6 +52,7 @@ void ACG_GameState::OnRep_CountDownTimer()
 	{
 		// play sound effect 2d
 		UGameplayStatics::PlaySound2D(GetWorld(), TimerTickSound);
+		// this isnt super accurate but it works
 		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &ACG_GameState::StartCountDown, 1.0f, false);
 	}
 	else
@@ -85,5 +87,15 @@ void ACG_GameState::OnRep_WinnerRef()
 	{
 		RoundEnded = true;
 		OnRep_RoundEnded();
+	}
+}
+
+void ACG_GameState::RoundStart()
+{
+	// Cast to game mode and unlock player movement
+	ACG_Gamemode* CGGameMode = Cast<ACG_Gamemode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (CGGameMode)
+	{
+		CGGameMode->EnableCharacterMovement();
 	}
 }
