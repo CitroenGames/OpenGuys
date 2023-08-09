@@ -29,10 +29,6 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 {
 	// get controlled pawn
 	APawn* ControlledPawn = PlayerController->GetPawn();
-	FVector SpawnTransform;
-	FRotator SpawnRotation;
-	AActor* RandomPlayerStart = nullptr;
-	TArray<AActor*> PlayerStarts;
 
 	//destroy controlled pawn
 	if (ControlledPawn)
@@ -40,52 +36,44 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 		ControlledPawn->Destroy();
 	}
 
+	FVector SpawnTransform;
+	FRotator SpawnRotation;
+	APlayerStart* RandomPlayerStart = nullptr;
+	TArray<APlayerStart*> PlayerStarts;
+
+	// create temporary array for player starts because GetAllActorsOfClass is a bish.
+	TArray<AActor*> TempPlayerStarts;
+	// get all actors of class and add to temp array
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), TempPlayerStarts);
+	// and then add to the player starts array
+	for (AActor* TempActor : TempPlayerStarts)
+	{
+		APlayerStart* PlayerStart = Cast<APlayerStart>(TempActor);
+		if (PlayerStart)
+		{
+			PlayerStarts.Add(PlayerStart);
+		}
+	}
+
 	// is checkpoint tag empty?
 	if (CheckPoint == FName("None"))
 	{
 		// spawn character at default location
 		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at default location"));
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
-		// filter player start with PlayerStart tag
-		for (int i = 0; i < PlayerStarts.Num(); i++)
-		{
-			APlayerStart* PlayerStart = Cast<APlayerStart>(PlayerStarts[i]);
-			if (PlayerStart != nullptr)
-			{
-				FString PlayerStartTag = PlayerStart->PlayerStartTag.ToString();
-				if (!PlayerStartTag.Equals("None", ESearchCase::IgnoreCase))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("PlayerStartTag: %s"), *PlayerStart->PlayerStartTag.ToString());
-					PlayerStarts.RemoveAt(i);
-					// Decrement the counter as we have just removed an item from the TArray
-					i--;
-				}
-			}
-		}
+		PlayerStarts.RemoveAll([CheckPoint](APlayerStart* PlayerStart) {
+			return PlayerStart->PlayerStartTag.ToString() != CheckPoint.ToString();
+		});
 	}
 	else
 	{
 		// spawn character at last checkpoint location
 		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at checkpoint location"));
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 		// filter player start with PlayerStart tag
 		FString CheckPointString = CheckPoint.ToString();
 		UE_LOG(LogTemp, Warning, TEXT("CheckPointString: %s"), *CheckPointString);
-		for (int i = 0; i < PlayerStarts.Num(); i++)
-		{
-			APlayerStart* PlayerStart = Cast<APlayerStart>(PlayerStarts[i]);
-			if (PlayerStart != nullptr)
-			{
-				FString PlayerStartTag = PlayerStart->PlayerStartTag.ToString();
-				if (PlayerStartTag != CheckPointString)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("PlayerStartTag: %s"), *PlayerStart->PlayerStartTag.ToString());
-					PlayerStarts.RemoveAt(i);
-					// Decrement the counter as we have just removed an item from the TArray
-					i--;
-				}
-			}
-		}
+		PlayerStarts.RemoveAll([CheckPoint](APlayerStart* PlayerStart) {
+			return PlayerStart->PlayerStartTag.ToString() != CheckPoint.ToString();
+		});
 	}
 
 	//set spawn transform to the first player start location

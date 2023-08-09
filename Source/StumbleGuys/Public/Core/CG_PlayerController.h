@@ -17,8 +17,6 @@ class STUMBLEGUYS_API ACG_PlayerController : public APlayerController
 	GENERATED_BODY()
 
 public: 
-
-	ACG_PlayerController();
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Server, Reliable, Category = "Spawn Character")
