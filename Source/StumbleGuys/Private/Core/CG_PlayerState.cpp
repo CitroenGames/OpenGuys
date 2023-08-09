@@ -35,3 +35,9 @@ void ACG_PlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	// replicate the bAppearanceMale variable
 	DOREPLIFETIME(ACG_PlayerState, bAppearanceMale);
 }
+
+void ACG_PlayerState::ServerSetCheckPoint_Implementation(FName CheckPoint)
+{
+	CurrentCheckPoint = CheckPoint;
+	UE_LOG(LogTemp, Warning, TEXT("Player %s has reached checkpoint %s"), *GetPlayerName(), *CheckPoint.ToString());
+}

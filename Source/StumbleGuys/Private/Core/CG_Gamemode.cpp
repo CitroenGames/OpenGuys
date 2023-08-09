@@ -40,9 +40,12 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	{
 		ControlledPawn->Destroy();
 	}
+	// TODO this doesnt seem to work
+	// print checkpoint to console
+	UE_LOG(LogTemp, Warning, TEXT("Checkpoint: %s"), CheckPoint)
 
 	// is checkpoint tag empty?
-	if (CheckPoint == "")
+	if (CheckPoint == FName("None"))
 	{
 		// spawn character at default location
 		UE_LOG(LogTemp, Warning, TEXT("Spawn Character at default location"));

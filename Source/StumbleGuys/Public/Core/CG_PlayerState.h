@@ -32,6 +32,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerSetCheckPoint(FName CheckPoint);
+
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		bool AppearanceIsInit;
 

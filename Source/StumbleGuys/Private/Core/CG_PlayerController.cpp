@@ -8,18 +8,13 @@
 #include "Core/CG_GameState.h"
 #include "Kismet/GameplayStatics.h"
 
-
-ACG_PlayerController::ACG_PlayerController()
-{
-	// cast to CG_PlayerState from player state
-	PlayerStateRefrence = Cast<ACG_PlayerState>(PlayerState);
-}
-
 void ACG_PlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	// set input mode game only 
 	SetInputMode(FInputModeGameOnly());
+	// cast to CG_PlayerState from player state
+	PlayerStateRefrence = Cast<ACG_PlayerState>(PlayerState);
 	InitPlayerController();
 }
 
@@ -31,20 +26,32 @@ void ACG_PlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 
 void ACG_PlayerController::ServerSpawnCharacter_Implementation()
 {
-	IsPlaying = true;
-	// spawn character from gamemode
-	ACG_Gamemode* Gamemode = Cast<ACG_Gamemode>(GetWorld()->GetAuthGameMode());
-	if (Gamemode)
+	if (!PlayerStateRefrence)
 	{
-		// get appearance id and ismaleappearance from player state
-		const int AppearanceID = PlayerStateRefrence->GetColorID();
-		const bool IsMaleAppearance = PlayerStateRefrence->GetMaleAppearance();
-		// get current checkpoint from player state
-		const FName CheckPoint = PlayerStateRefrence->GetCurrentCheckPoint();
-		Gamemode->SpawnCharacter(this, "", 1, true);
-		// log
-		UE_LOG(LogTemp, Warning, TEXT("Spawned Character"));
+		UE_LOG(LogTemp, Error, TEXT("ACG_PlayerController::ServerSpawnCharacter_Implementation PlayerStateRefrence is null!"));
+		return;
 	}
+
+	ACG_Gamemode* Gamemode = Cast<ACG_Gamemode>(GetWorld()->GetAuthGameMode());
+	if (!Gamemode)
+		return;
+
+	// Retrieve player state values
+	const int AppearanceID = PlayerStateRefrence->GetColorID();
+	const bool IsMaleAppearance = PlayerStateRefrence->GetMaleAppearance();
+	const FName CheckPoint = PlayerStateRefrence->GetCurrentCheckPoint();
+
+	if (!CheckPoint.IsNone())
+	{
+		Gamemode->SpawnCharacter(this, CheckPoint, 1, true);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Checkpoint is empty"));
+		Gamemode->SpawnCharacter(this, "", 1, true);
+	}
+
+	IsPlaying = true;
 }
 
 void ACG_PlayerController::ServerSpawnSpectator_Implementation(bool SpawnAtPlayerLocation)
