@@ -1,6 +1,5 @@
 // CitroenGames 2023
 
-
 #include "Core/CG_Gamemode.h"
 #include "Core/CG_PlayerController.h"
 #include "Core/CG_PlayerState.h"
@@ -40,9 +39,6 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	{
 		ControlledPawn->Destroy();
 	}
-	// TODO this doesnt seem to work
-	// print checkpoint to console
-	UE_LOG(LogTemp, Warning, TEXT("Checkpoint: %s"), CheckPoint)
 
 	// is checkpoint tag empty?
 	if (CheckPoint == FName("None"))
