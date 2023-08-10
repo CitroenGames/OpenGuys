@@ -8,6 +8,7 @@
 #include "Core/CG_GameState.h"
 #include "EngineUtils.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Core/CG_PlayerInterface.h"
 
 ACG_Gamemode::ACG_Gamemode()
 {
@@ -143,9 +144,6 @@ void ACG_Gamemode::RefreshPlayerStarts()
 void ACG_Gamemode::EnableCharacterMovement()
 {
 	UE_LOG(LogTemp, Warning, TEXT("EnableCharacterMovement"));
-	// TODO enable character movement by iterating through all player controllers
-	// and getting the controlled pawn and setting movement mode to walking
-	
 	for (TActorIterator<ACG_BaseCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		ACG_BaseCharacter* Character = *ActorItr;
@@ -157,25 +155,47 @@ void ACG_Gamemode::EnableCharacterMovement()
 			{
 				CharacterMovementComponent->SetMovementMode(EMovementMode::MOVE_Walking);
 			}
+
+			// sphere trace by channel visibility with a 100 as a radius and call onplayercollision with all of the actors hit
+			TArray<FHitResult> ActorsHit;
+
+			FVector Location = Character->GetActorLocation();
+			FCollisionShape CollisionShape;
+			CollisionShape.ShapeType = ECollisionShape::Sphere;
+			CollisionShape.SetSphere(100.f);
+			FCollisionObjectQueryParams ObjectQueryParams;
+			ObjectQueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+			FCollisionQueryParams CollisionQueryParams;
+			CollisionQueryParams.AddIgnoredActor(Character);
+			GetWorld()->SweepMultiByObjectType(ActorsHit, Location, Location, FQuat::Identity, ObjectQueryParams, CollisionShape, CollisionQueryParams);
+
+			for (auto& Hit : ActorsHit)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *Hit.GetActor()->GetName());
+				// check if the actor hit implements the interface
+				if (Hit.GetActor()->GetClass()->ImplementsInterface(UCG_PlayerInterface::StaticClass()))
+				{
+					// call onplayercollision
+					ICG_PlayerInterface* PlayerInterface = Cast<ICG_PlayerInterface>(Hit.GetActor());
+					PlayerInterface->Execute_OnPlayerCollision(Hit.GetActor(), Character);
+				}
+			}
 		}
 	}
-	
-	// also do a sphere trace by channel visibility with a 100 as a radius
-	// and call onplayercollision with all of the actors hit
 }
 
 void ACG_Gamemode::TraveltoLevel()
 {
-	// get current level name and switch depending on level name
 	FString CurrentLevelName = GetWorld()->GetMapName();
 	UE_LOG(LogTemp, Warning, TEXT("CurrentLevelName: %s"), *CurrentLevelName);
-	switch (*CurrentLevelName)
-	{
-	case "Gameplay_Map1_Level":
-		UGameplayStatics::OpenLevel(GetWorld(), "Level_02");
-		break;
-	default:
-		UE_LOG(LogTemp, Error, TEXT("ERROR: MAP IS NOT VALID"));
-		break;
-	}
+	//switch (*CurrentLevelName)
+	//{
+	//case "Gameplay_Map1_Level":
+	//	// server travel to level 2
+	//	UE_LOG(LogTemp, Warning, TEXT("ServerTravel to level 2"));
+	//	break;
+	//default:
+	//	UE_LOG(LogTemp, Error, TEXT("ERROR: MAP IS NOT VALID"));
+	//	break;
+	//}
 }

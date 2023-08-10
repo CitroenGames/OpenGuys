@@ -32,7 +32,7 @@ public:
 		void ServerSetAppearance(bool AppearanceMale, int NewAppearanceColorID);
 
 	// blueprint implementable function for respawning the player
-	UFUNCTION(BlueprintImplementableEvent, Category = "CG_BaseCharacter")
+	UFUNCTION()
 		void RespawnPlayer();
 
 protected:

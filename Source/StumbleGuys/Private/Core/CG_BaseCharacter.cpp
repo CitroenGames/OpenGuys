@@ -7,6 +7,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Core/CG_PlayerController.h"
 
 // Sets default values
 ACG_BaseCharacter::ACG_BaseCharacter()
@@ -32,15 +33,26 @@ ACG_BaseCharacter::ACG_BaseCharacter()
 	Camera->bUsePawnControlRotation = false;
 }
 
+void ACG_BaseCharacter::RespawnPlayer()
+{
+	// get player controller and then call respawn function ACG_PlayerController::ServerRespawnPlayer
+	ACG_PlayerController* PlayerController = Cast<ACG_PlayerController>(GetController());
+	if (PlayerController)
+	{
+		PlayerController->ServerSpawnCharacter();
+	}
+}
+
 // Called when the game starts or when spawned
 void ACG_BaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawningEffects();
 	// if locally controlled
+	// TODO This needs a ton of work
 	if (IsLocallyControlled())
 	{
-
+		
 	}
 }
 
