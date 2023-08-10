@@ -11,9 +11,27 @@ ACG_PlayerState::ACG_PlayerState()
 
 }
 
+int ACG_PlayerState::GetColorID()
+{
+	if (AppearanceIsInit)
+	return AppearanceColorID;
+	else
+	{
+		InitAppearance();
+		// hope that it will be initialized
+		UE_LOG(LogTemp, Warning, TEXT("ACG_PlayerState::GetColorID() AppearanceIsInit is false!"));
+		return AppearanceColorID;
+	}
+}
+
 void ACG_PlayerState::BeginPlay()
 {
 	Super::BeginPlay();
+	// FIXME: THIS DOESNT SEEM TO REPLICATED WELL
+	InitAppearance();
+}
+void ACG_PlayerState::InitAppearance_Implementation()
+{
 	// random bool for bAppearanceMale
 	bAppearanceMale = FMath::RandBool();
 	// random int for AppearanceColorID

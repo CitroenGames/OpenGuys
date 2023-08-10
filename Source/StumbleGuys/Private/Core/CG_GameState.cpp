@@ -39,6 +39,19 @@ void ACG_GameState::StartCountDown()
 
 void ACG_GameState::OnRep_CountDownTimer()
 {
+	if (CountDownTimer != 0)
+	{
+		// play sound effect 2d
+		UGameplayStatics::PlaySound2D(GetWorld(), TimerTickSound);
+		// this isnt super accurate but it works
+		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &ACG_GameState::StartCountDown, 1.0f, false);
+	}
+	if (CountDownTimer <= 0)
+	{
+		RoundStart();
+		// play sound effect 2d
+		UGameplayStatics::PlaySound2D(GetWorld(), TimerEndSound);
+	}
 	if (CountDownTimer == 2)
 	{
 		ACG_PlayerController* CGPlayerController = Cast<class ACG_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -47,19 +60,6 @@ void ACG_GameState::OnRep_CountDownTimer()
 			// play match start
 			CGPlayerController->PlayMatchReady();
 		}
-	}
-	if (CountDownTimer != 0)
-	{
-		// play sound effect 2d
-		UGameplayStatics::PlaySound2D(GetWorld(), TimerTickSound);
-		// this isnt super accurate but it works
-		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &ACG_GameState::StartCountDown, 1.0f, false);
-	}
-	else
-	{
-		RoundStart();
-		// play sound effect 2d
-		UGameplayStatics::PlaySound2D(GetWorld(), TimerEndSound);
 	}
 }
 

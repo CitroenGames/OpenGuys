@@ -21,7 +21,7 @@ public:
 		bool GetMaleAppearance() { return bAppearanceMale; }
 
 	UFUNCTION()
-		int GetColorID() { return AppearanceColorID; }
+		int GetColorID();
 
 	// get current checkpoint
 	UFUNCTION()
@@ -46,4 +46,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Replicated, meta = (AllowPrivateAccess = true))
 		bool bAppearanceMale;
+
+private:
+	UFUNCTION(Server, Reliable)
+		void InitAppearance();
 };

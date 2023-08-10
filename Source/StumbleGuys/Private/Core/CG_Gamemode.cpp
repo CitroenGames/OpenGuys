@@ -44,7 +44,7 @@ void ACG_Gamemode::SwapPlayerControllers(APlayerController* OldPC, APlayerContro
 	AllPlayerControllers.Add(NewPC);
 }
 
-void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName CheckPoint, int AppearanceID, bool IsMaleAppearance)
+void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName CheckPoint, int AppearanceID = 6, bool IsMaleAppearance = false)
 {
 	// get controlled pawn
 	APawn* ControlledPawn = PlayerController->GetPawn();
@@ -103,7 +103,7 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	// possess character
 	PlayerController->Possess(Character);
 	PlayerController->SetViewTargetWithBlend(Character, 0.f, EViewTargetBlendFunction::VTBlend_Cubic);
-	Character->ServerSetAppearance(IsMaleAppearance, AppearanceID);
+	Character->MulticastSetAppearance(IsMaleAppearance, AppearanceID);
 
 	// Cast MyGameState and check if the countdown timer is not 0; if it is, lock the player movement by setting movement mode to none
 	ACG_GameState* CGGameState = Cast<ACG_GameState>(UGameplayStatics::GetGameState(this));

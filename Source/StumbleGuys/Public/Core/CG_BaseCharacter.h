@@ -28,8 +28,8 @@ public:
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 		void Multicast_Ragdoll();
 
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-		void ServerSetAppearance(bool AppearanceMale, int NewAppearanceColorID);
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+		void MulticastSetAppearance(bool AppearanceMale, int NewAppearanceColorID);
 
 	// blueprint implementable function for respawning the player
 	UFUNCTION()
