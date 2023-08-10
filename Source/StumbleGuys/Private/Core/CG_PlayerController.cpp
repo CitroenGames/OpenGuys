@@ -42,12 +42,12 @@ void ACG_PlayerController::ServerSpawnCharacter_Implementation()
 
 	if (!CheckPoint.IsNone())
 	{
-		Gamemode->SpawnCharacter(this, CheckPoint, 1, true);
+		Gamemode->SpawnCharacter(this, CheckPoint, AppearanceID, IsMaleAppearance);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Checkpoint is empty"));
-		Gamemode->SpawnCharacter(this, "", 1, true);
+		Gamemode->SpawnCharacter(this, "", AppearanceID, IsMaleAppearance);
 	}
 
 	IsPlaying = true;
@@ -63,7 +63,14 @@ void ACG_PlayerController::ServerSpawnSpectator_Implementation(bool SpawnAtPlaye
 		// get controlled pawn
 		APawn* ControlledPawn = GetPawn();
 		// get location of controlled pawn
-		FVector SpawnTransform = ControlledPawn->GetActorLocation();
+		FVector SpawnTransform = FVector(0,0,0);
+
+		// get if we are controlling a character
+		if (ControlledPawn)
+		{
+			SpawnTransform = ControlledPawn->GetActorLocation();
+		}
+		// spawn spectator
 		Gamemode->SpawnSpectator(this, SpawnAtPlayerLocation, SpawnTransform);
 	}
 }
