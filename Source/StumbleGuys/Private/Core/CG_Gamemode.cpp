@@ -124,6 +124,25 @@ void ACG_Gamemode::SpawnSpectator(APlayerController* Player, bool SpawnAtPlayerL
 {
 	// TODO spawn spectator
 	UE_LOG(LogTemp, Warning, TEXT("SpawnSpectator"));
+	// get random player starts and spawn spectator
+	if (PlayerStarts.Num() > 0)
+	{
+		// get random player start
+		APlayerStart* RandomPlayerStart = PlayerStarts[FMath::RandRange(0, (PlayerStarts.Num() - 1))];
+		// spawn spectator
+		APawn* Spectator = GetWorld()->SpawnActor<APawn>(SpectatorClass, RandomPlayerStart->GetActorLocation(), RandomPlayerStart->GetActorRotation());
+		// possess spectator
+		Player->Possess(Spectator);
+		Player->SetViewTargetWithBlend(Spectator, 0.f, EViewTargetBlendFunction::VTBlend_Cubic);
+	}
+	else
+	{
+		// spawn spectator at player location
+		APawn* Spectator = GetWorld()->SpawnActor<APawn>(SpectatorClass, SpawnTransform, FRotator(0.f, 0.f, 0.f));
+		// possess spectator
+		Player->Possess(Spectator);
+		Player->SetViewTargetWithBlend(Spectator, 0.f, EViewTargetBlendFunction::VTBlend_Cubic);
+	}
 }
 
 void ACG_Gamemode::RefreshPlayerStarts()

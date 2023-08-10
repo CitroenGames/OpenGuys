@@ -65,18 +65,17 @@ void ACG_GameState::OnRep_CountDownTimer()
 
 void ACG_GameState::OnRep_RoundEnded()
 {
-	if (RoundEnded)
-	{
-		// play sound effect 2d
-		UGameplayStatics::PlaySound2D(GetWorld(), GameEndSound);
-		// get cg player controller
-		ACG_PlayerController* CGPlayerController = Cast<class ACG_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		if (CGPlayerController)
-		{
-			// play match Over
-			CGPlayerController->PlayMatchOver();
-		}
+	if (!RoundEnded)
+		return;
 
+	// play sound effect 2d
+	UGameplayStatics::PlaySound2D(GetWorld(), GameEndSound);
+	// get cg player controller
+	ACG_PlayerController* CGPlayerController = Cast<class ACG_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (CGPlayerController)
+	{
+		// play match Over
+		CGPlayerController->PlayMatchOver();
 	}
 }
 
