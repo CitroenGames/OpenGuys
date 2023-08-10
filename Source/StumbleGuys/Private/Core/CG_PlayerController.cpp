@@ -53,7 +53,7 @@ void ACG_PlayerController::ServerSpawnCharacter_Implementation()
 	IsPlaying = true;
 }
 
-void ACG_PlayerController::ServerSpawnSpectator_Implementation(bool SpawnAtPlayerLocation)
+void ACG_PlayerController::ServerSpawnSpectator_Implementation()
 {
 	IsPlaying = false;
 	// spawn spectator from gamemode
@@ -64,11 +64,13 @@ void ACG_PlayerController::ServerSpawnSpectator_Implementation(bool SpawnAtPlaye
 		APawn* ControlledPawn = GetPawn();
 		// get location of controlled pawn
 		FVector SpawnTransform = FVector(0,0,0);
+		bool SpawnAtPlayerLocation;
 
 		// get if we are controlling a character
 		if (ControlledPawn)
 		{
 			SpawnTransform = ControlledPawn->GetActorLocation();
+			SpawnAtPlayerLocation = true;
 		}
 		// spawn spectator
 		Gamemode->SpawnSpectator(this, SpawnAtPlayerLocation, SpawnTransform);
@@ -94,7 +96,7 @@ void ACG_PlayerController::InitPlayerController()
 			}
 			else
 			{
-				ServerSpawnSpectator(false);
+				ServerSpawnSpectator();
 				// log
 				UE_LOG(LogTemp, Warning, TEXT("Spawned Spectator"));
 			}

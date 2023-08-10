@@ -23,7 +23,7 @@ public:
 		void ServerSpawnCharacter();
 
 	UFUNCTION(BlueprintCallable, Server, Reliable, Category = "Spawn Character")
-		void ServerSpawnSpectator(bool SpawnAtPlayerLocation);
+		void ServerSpawnSpectator();
 
 	UFUNCTION(Client, Reliable, Category = "Animation")
 		void PlayMatchOver();
