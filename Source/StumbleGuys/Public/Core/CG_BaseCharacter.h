@@ -6,14 +6,13 @@
 #include "GameFramework/Character.h"
 #include "NiagaraSystem.h"
 #include "CG_PlayerState.h"
-#include "AlsCharacterExample.h"
 #include "CG_PlayerInterface.h"
 #include "CG_BaseCharacter.generated.h"
 
 class ACG_PlayerState;
 
 UCLASS()
-class STUMBLEGUYS_API ACG_BaseCharacter : public AAlsCharacterExample, public ICG_PlayerInterface
+class STUMBLEGUYS_API ACG_BaseCharacter : public ACharacter, public ICG_PlayerInterface
 {
 	GENERATED_BODY()
 
@@ -62,6 +61,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Mesh")
 		USkeletalMesh* FemaleMesh;
 
+	UFUNCTION(BlueprintCallable)
+		void SetZoomDistanceCamera(float NewZoomDistance);
+
 private:
 
 	UPROPERTY(Replicated)
@@ -69,4 +71,22 @@ private:
 
 	UFUNCTION()
 		void SpawningEffects();
+
+	UFUNCTION()
+		FLinearColor GetColorFromID(int ColorID);
+
+	UPROPERTY()
+		UMaterialInstanceDynamic* DynamicMaterial;
+
+	UPROPERTY()
+		UMaterialInstanceDynamic* DynamicMaterial1;
+
+	// camera boom
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
+
+	// camera
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* Camera;
+
 };

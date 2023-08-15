@@ -3,7 +3,7 @@
 #include "Core/CG_Gamemode.h"
 #include "Core/CG_PlayerController.h"
 #include "Core/CG_PlayerState.h"
-#include "AlsCharacterExample.h"
+#include "Core/CG_BaseCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Core/CG_GameState.h"
 #include "EngineUtils.h"
@@ -99,10 +99,11 @@ void ACG_Gamemode::SpawnCharacter(APlayerController* PlayerController, FName Che
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	// spawn character
-	AAlsCharacterExample* Character = GetWorld()->SpawnActor<AAlsCharacterExample>(CharacterClass, SpawnTransform, SpawnRotation, SpawnParameters);
+	ACG_BaseCharacter* Character = GetWorld()->SpawnActor<ACG_BaseCharacter>(CharacterClass, SpawnTransform, SpawnRotation, SpawnParameters);
 	// possess character
 	PlayerController->Possess(Character);
 	PlayerController->SetViewTargetWithBlend(Character, 0.f, EViewTargetBlendFunction::VTBlend_Cubic);
+	Character->MulticastSetAppearance(IsMaleAppearance, AppearanceID);
 
 	// Cast MyGameState and check if the countdown timer is not 0; if it is, lock the player movement by setting movement mode to none
 	ACG_GameState* CGGameState = Cast<ACG_GameState>(UGameplayStatics::GetGameState(this));
@@ -163,9 +164,9 @@ void ACG_Gamemode::RefreshPlayerStarts()
 void ACG_Gamemode::EnableCharacterMovement()
 {
 	UE_LOG(LogTemp, Warning, TEXT("EnableCharacterMovement"));
-	for (TActorIterator<AAlsCharacterExample> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	for (TActorIterator<ACG_BaseCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		AAlsCharacterExample* Character = *ActorItr;
+		ACG_BaseCharacter* Character = *ActorItr;
 		if (Character)
 		{
 			// We need to get the movement component and set it as a local variable
